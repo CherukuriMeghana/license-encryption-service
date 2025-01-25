@@ -1,0 +1,164 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Handles license generation, file encryption, and secure link creation.",
+        "title": "Secure License Encryption Service",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "paths": {
+        "/sles/api/v1/fetch-license": {
+            "get": {
+                "description": "Get the list of license keys",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Fetch the license keys",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/sles/api/v1/generate-license": {
+            "post": {
+                "description": "Create a new license key by providing a valid license type and expiry (e.g., days, num of tokens).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Generate license key",
+                "parameters": [
+                    {
+                        "description": "License details. Specify 'type' as 'time-bound' or 'usage-limited'. For 'expiry', provide either days (e.g., 30) or tokens (e.g., 20).",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.LicenseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/sles/api/v1/encrypt-file": {
+            "get": {
+                "description": "Get the list of encrypted files",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get the list of encrypted files with it's associated keys",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "description": "Encrypt the file using the provided license key.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "summary": "Encrypt the file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File to be uploaded",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "License key",
+                        "name": "licensekey",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Encrypted file",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },    
+        "/sles/api/v1/generate-link": {
+            "post": {
+                "description": "Create a secure, shareable link to access the decrypted file.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Generate secure URL",
+                "parameters": [
+                    {
+                        "description": "encrypted file path and license key for generating shareable URL",
+                        "name": "URLRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.URLRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "main.LicenseRequest": {
+            "type": "object",
+            "required": [
+                "expiry",
+                "type"
+            ],
+            "properties": {
+                "expiry": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.URLRequest": {
+            "type": "object",
+            "required": [
+                "filepath",
+                "licensekey"
+            ],
+            "properties": {
+                "filepath": {
+                    "type": "string"
+                },
+                "licensekey": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

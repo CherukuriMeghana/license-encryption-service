@@ -1,0 +1,116 @@
+definitions:
+  main.LicenseRequest:
+    properties:
+      expiry:
+        type: integer
+      type:
+        type: string
+    required:
+    - expiry
+    - type
+    type: object
+  main.URLRequest:
+    properties:
+      filepath:
+        type: string
+      licensekey:
+        type: string
+    required:
+    - filepath
+    - licensekey
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: Handles license generation, file encryption, and secure link creation.
+  title: Secure License Encryption Service
+  version: "1.0"
+paths:
+  
+
+  /sles/api/v1/generate-license:
+    post:
+      consumes:
+      - application/json
+      description: Create a new license key by providing a valid license type and
+        expiry (e.g., days, num of tokens).
+      parameters:
+      - description: License details. Specify 'type' as 'time-bound' or 'usage-limited'.
+          For 'expiry', provide either days (e.g., 30) or tokens (e.g., 20).
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/main.LicenseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Generate license key
+  
+  /sles/api/v1/fetch-license:
+    get:
+      consumes:
+      - application/json
+      description: Get the list of license keys
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Fetch the license keys
+
+  s/sles/api/v1/encrypt-file:
+    get:
+      consumes:
+      - application/json
+      description: Get the list of encrypted files
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get the list of encrypted files with it's associated keys
+    post:
+      consumes:
+      - multipart/form-data
+      description: Encrypt the file using the provided license key.
+      parameters:
+      - description: File to be uploaded
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: License key
+        in: formData
+        name: licensekey
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Encrypted file
+          schema:
+            type: file
+      summary: Encrypt the file
+  
+  /sles/api/v1/generate-link:
+    post:
+      consumes:
+      - application/json
+      description: Create a secure, shareable link to access the decrypted file.
+      parameters:
+      - description: encrypted file path and license key for generating shareable
+          URL
+        in: body
+        name: URLRequest
+        required: true
+        schema:
+          $ref: '#/definitions/main.URLRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Generate secure URL
+swagger: "2.0"
