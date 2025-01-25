@@ -9,11 +9,16 @@ A Go-based application that generates license keys, uses AES encryption for file
 
 2. Navigate to project directory
 
-3. Install project dependencies
+3. Initialize Go Modules (if not already initialized)
+    ```bash
+    go mod init license-encryption-service
+    ``` 
+
+5. Install project dependencies
     ```bash
     go get
     ```
-4. Generate Swagger documentation
+6. Generate Swagger documentation
     ```bash
     swag init
     ```
